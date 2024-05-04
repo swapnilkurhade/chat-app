@@ -1,5 +1,5 @@
 import bcryptjs from 'bcryptjs';
-import user from "../models/user.model.js";
+import User from "../models/user.model.js";
 import generateTokenAndSetCookies from '../utils/generateToken.js';
 
 export const SignUpUser = async(req, res) =>{
@@ -11,7 +11,7 @@ export const SignUpUser = async(req, res) =>{
             return res.status(400).json({ error : 'Passswords dont match...'})
         }
 
-        const response = await user.findOne({ username });
+        const response = await User.findOne({ username });
 
         if(response){
             return res.status(400).json({ error : 'User aleready exists...'})
@@ -25,7 +25,7 @@ export const SignUpUser = async(req, res) =>{
         const boyProfile = `https://avatar.iran.liara.run/public/boy?username=${username}`
         const girlProfile = `https://avatar.iran.liara.run/public/girl?username=${username}`
 
-        const newUser = new user({
+        const newUser = new User({
             fullName, username, gender,
             password: hashedPassword,
             profilePic: gender === 'male' ? boyProfile : girlProfile
@@ -57,7 +57,7 @@ export const loginUser = async(req, res) =>{
     try {
         const { username, password } = req.body;
 
-        const response = await user.findOne({ username });
+        const response = await User.findOne({ username });
         const isPasswordCorrect = await bcryptjs.compare(password, response?.password || "");
 
         if(!response || !isPasswordCorrect){
